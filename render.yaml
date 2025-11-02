@@ -15,5 +15,3 @@ services:
 databases:
   - name: mediaplay-db
     plan: free
-    databaseName: mediaplay
-    user: mediaplay
