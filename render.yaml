@@ -21,7 +21,7 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.0
 
-  - type: postgresql
+  - type: postgres
     name: mediaplay-db
     plan: free  # ou starter/pro para produção
     databaseName: mediaplay
