@@ -4,27 +4,16 @@ services:
   - type: web
     name: mediaplay-api
     runtime: python3
-    plan: free  # ou starter/pro para produção
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port 10000"
     envVars:
-      - key: DATABASE_URL
-        sync: false  # Será configurado manualmente no painel do Render
-      - key: SECRET_KEY
-        generateValue: true  # Render gera automaticamente
-      - key: ALGORITHM
-        value: HS256
-      - key: ACCESS_TOKEN_EXPIRE_MINUTES
-        value: 30
-      - key: CORS_ORIGINS
-        value: "[]"  # Configurar manualmente com domínios reais
-      - key: PYTHON_VERSION
-        value: 3.11.0
+      - key: DB_URL
+        fromDatabase:
+          name: mediaplay-db
+          property: connectionString
 
-  - type: postgres
-    name: mediaplay-db
-    plan: free  # ou starter/pro para produção
+databases:
+  - name: mediaplay-db
+    plan: free
     databaseName: mediaplay
-    databaseUser: mediaplay_user
-
-
+    user: mediaplay
