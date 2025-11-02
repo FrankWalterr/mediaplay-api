@@ -1,0 +1,30 @@
+# Render Blueprint para deploy automático
+
+services:
+  - type: web
+    name: mediaplay-api
+    runtime: python3
+    plan: free  # ou starter/pro para produção
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false  # Será configurado manualmente no painel do Render
+      - key: SECRET_KEY
+        generateValue: true  # Render gera automaticamente
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 30
+      - key: CORS_ORIGINS
+        value: "[]"  # Configurar manualmente com domínios reais
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+  - type: pgsql
+    name: mediaplay-db
+    plan: free  # ou starter/pro para produção
+    databaseName: mediaplay
+    databaseUser: mediaplay_user
+
+
