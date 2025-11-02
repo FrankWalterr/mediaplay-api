@@ -3,7 +3,7 @@
 services:
   - type: web
     name: mediaplay-api
-    runtime: python3
+    runtime: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn app.main:app --host 0.0.0.0 --port 10000"
     envVars:
