@@ -1,40 +1,15 @@
-"""Configurações da aplicação."""
-from pydantic_settings import BaseSettings
-from typing import List
+# app/config.py
+from __future__ import annotations
+import os
+from pydantic import BaseModel
+from functools import lru_cache
 
+class Settings(BaseModel):
+    database_url: str = os.getenv("DATABASE_URL") or os.getenv("database_url", "")
+    sql_echo: bool = os.getenv("SQL_ECHO", "false").lower() == "true"
 
-class Settings(BaseSettings):
-    """Configurações do aplicativo."""
-    
-    # Nome da aplicação
-    app_name: str = "Mediaplay API"
-    app_version: str = "1.0.0"
-    
-    # Segurança
-    secret_key: str = "your-secret-key-change-in-production-use-openssl-rand-hex-32"
-    algorithm: str = "HS256"
-    access_token_expire_minutes: int = 30
-    
-    # CORS
-    cors_origins: List[str] = ["*"]  # Em produção, especificar domínios exatos
-    
-    # Database
-    database_url: str = "sqlite:///./mediaplay.db"  # Local: SQLite
-    
-    # Para produção com PostgreSQL no Render:
-    # database_url: str = "postgresql://user:password@host:5432/dbname"
-    
-    # Configurações do SQLAlchemy
-    echo_sql: bool = False
-    pool_pre_ping: bool = True
-    pool_size: int = 5
-    max_overflow: int = 10
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
 
-
-# Instância global de configurações
-settings = Settings()
-
+settings = get_settings()

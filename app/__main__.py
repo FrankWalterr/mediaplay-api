@@ -1,8 +1,16 @@
-"""Entry point para executar a API com python -m app."""
-import uvicorn
-from app.main import app
+# app/main.py
+from __future__ import annotations
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+from fastapi import FastAPI
+from app.db import init_db
 
+app = FastAPI(title="Mediaplay API")
 
+@app.on_event("startup")
+def on_startup() -> None:
+    # Inicializa/verifica o banco ao subir a aplicação
+    init_db()
+
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
