@@ -8,7 +8,7 @@ from app import schemas, crud
 from app.deps import get_current_user
 from app.models import User
 
-router = APIRouter(prefix="/playlists", tags=["Playlists"])
+router = APIRouter(tags=["Playlists"])
 
 
 @router.get("", response_model=List[schemas.PlaylistWithItems])

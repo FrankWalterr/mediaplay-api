@@ -8,7 +8,7 @@ from app import schemas, crud
 from app.deps import get_current_user
 from app.models import User, MediaType
 
-router = APIRouter(prefix="/favorites", tags=["Favorites"])
+router = APIRouter(tags=["Favorites"])
 
 
 @router.get("", response_model=List[schemas.FavoriteOut])
