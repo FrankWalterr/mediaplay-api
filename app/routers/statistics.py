@@ -40,3 +40,4 @@ def update_statistics(
     return db_statistics
 
 
+

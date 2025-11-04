@@ -391,3 +391,4 @@ def upsert_statistics(db: Session, user_id: int, statistics: schemas.StatisticsI
         return db_stats
 
 
+

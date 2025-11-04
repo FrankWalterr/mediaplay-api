@@ -83,3 +83,4 @@ def init_db() -> None:
     except Exception as e:
         log.exception("Falha no init_db/create_all: %s", e)
         raise
+

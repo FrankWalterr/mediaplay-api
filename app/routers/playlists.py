@@ -94,7 +94,6 @@ def delete_playlist(
     return None
 
 
-# ==================== PLAYLIST ITEMS ====================
 
 @router.get("/{playlist_id}/items", response_model=List[schemas.PlaylistItemOut])
 def get_playlist_items(
@@ -105,7 +104,7 @@ def get_playlist_items(
     """
     Lista todos os itens de uma playlist.
     """
-    # Verifica se a playlist pertence ao usuário
+  
     playlist = crud.get_playlist(db, playlist_id, current_user.id)
     if not playlist:
         raise HTTPException(
@@ -130,7 +129,7 @@ def create_playlist_item(
     Se o item já existir (mesma media_uri + media_type), atualiza os dados.
     Caso contrário, adiciona novo item.
     """
-    # Verifica se a playlist pertence ao usuário
+
     playlist = crud.get_playlist(db, playlist_id, current_user.id)
     if not playlist:
         raise HTTPException(
@@ -152,7 +151,7 @@ def delete_playlist_item(
     """
     Remove item específico da playlist.
     """
-    # Verifica se a playlist pertence ao usuário
+
     playlist = crud.get_playlist(db, playlist_id, current_user.id)
     if not playlist:
         raise HTTPException(
