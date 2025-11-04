@@ -1,30 +1,22 @@
 """Router de tags."""
-from typing import List, Optional
+from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app import schemas, crud
-from app.deps import get_current_user, get_optional_user
-from app.models import User, Tag
+from app.deps import get_current_user
+from app.models import User
 
 router = APIRouter(prefix="/tags", tags=["Tags"])
 
 
 @router.get("", response_model=List[schemas.TagOut])
-def get_tags(
-    current_user: Optional[User] = Depends(get_optional_user),
-    db: Session = Depends(get_db)
-):
+def get_tags(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     """
-    Lista todas as tags (público).
-    Se autenticado, retorna apenas as tags do usuário.
-    Se não autenticado, retorna todas as tags.
+    Lista todas as tags do usuário.
     """
-    if current_user:
-        tags = crud.get_user_tags(db, current_user.id)
-    else:
-        tags = db.query(Tag).all()
+    tags = crud.get_user_tags(db, current_user.id)
     return tags
 
 

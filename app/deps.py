@@ -56,31 +56,4 @@ def get_current_user_id(
     return current_user.id
 
 
-def get_optional_user(
-    credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False)),
-    db: Session = Depends(get_db)
-) -> User | None:
-    """Obtém o usuário atual se houver token, caso contrário retorna None."""
-    if credentials is None:
-        return None
-    
-    try:
-        token = credentials.credentials
-        payload = decode_access_token(token)
-        
-        if payload is None:
-            return None
-        
-        user_id: int = payload.get("user_id")
-        email: str = payload.get("email")
-        
-        if user_id is None or email is None:
-            return None
-        
-        user = db.query(User).filter(User.id == user_id).first()
-        return user
-    except Exception:
-        return None
-
-
 
