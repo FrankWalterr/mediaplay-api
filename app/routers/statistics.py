@@ -1,26 +1,38 @@
 """Router de estatísticas."""
-from fastapi import APIRouter, Depends
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app import schemas, crud
-from app.deps import get_current_user
-from app.models import User
+from app.deps import get_current_user, get_optional_user
+from app.models import User, Statistics
 
 router = APIRouter(prefix="/statistics", tags=["Statistics"])
 
 
 @router.get("", response_model=schemas.StatisticsOut)
-def get_statistics(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def get_statistics(
+    current_user: Optional[User] = Depends(get_optional_user),
+    db: Session = Depends(get_db)
+):
     """
-    Obtém estatísticas do usuário.
-    
-    Se não existir, cria estatísticas padrão.
+    Obtém estatísticas (público).
+    Se autenticado, retorna estatísticas do usuário.
+    Se não autenticado, retorna todas as estatísticas (primeira encontrada).
     """
-    statistics = crud.get_user_statistics(db, current_user.id)
-    
-    if not statistics:
-        statistics = crud.create_default_statistics(db, current_user.id)
+    if current_user:
+        statistics = crud.get_user_statistics(db, current_user.id)
+        if not statistics:
+            statistics = crud.create_default_statistics(db, current_user.id)
+    else:
+        # Se não autenticado, retorna primeira estatística encontrada
+        statistics = db.query(Statistics).first()
+        if not statistics:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Nenhuma estatística encontrada"
+            )
     
     return statistics
 

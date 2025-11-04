@@ -1,22 +1,30 @@
 """Router de histórico."""
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app import schemas, crud
-from app.deps import get_current_user
-from app.models import User
+from app.deps import get_current_user, get_optional_user
+from app.models import User, HistoryItem
 
 router = APIRouter(prefix="/history", tags=["History"])
 
 
 @router.get("", response_model=List[schemas.HistoryItemOut])
-def get_history(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+def get_history(
+    current_user: Optional[User] = Depends(get_optional_user),
+    db: Session = Depends(get_db)
+):
     """
-    Lista todo o histórico de reprodução do usuário.
+    Lista todo o histórico de reprodução (público).
+    Se autenticado, retorna apenas o histórico do usuário.
+    Se não autenticado, retorna todo o histórico.
     """
-    history = crud.get_user_history(db, current_user.id)
+    if current_user:
+        history = crud.get_user_history(db, current_user.id)
+    else:
+        history = db.query(HistoryItem).all()
     return history
 
 
