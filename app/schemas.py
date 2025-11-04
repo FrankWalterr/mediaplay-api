@@ -55,7 +55,9 @@ class FavoriteBase(BaseModel):
 
 class FavoriteIn(FavoriteBase):
     """Schema de entrada de favorito."""
-    pass
+    
+    class Config:
+        extra = "ignore"  # Ignora campos extras como created_at, updated_at, id
 
 
 class FavoriteOut(FavoriteBase):
@@ -107,7 +109,9 @@ class PlaylistBase(BaseModel):
 
 class PlaylistIn(PlaylistBase):
     """Schema de entrada de playlist."""
-    pass
+    
+    class Config:
+        extra = "ignore"  # Ignora campos extras como created_at, updated_at, id
 
 
 class PlaylistOut(PlaylistBase):
@@ -141,7 +145,10 @@ class PlaylistItemBase(BaseModel):
 
 class PlaylistItemIn(PlaylistItemBase):
     """Schema de entrada de item de playlist."""
-    pass
+    
+    class Config:
+        # Ignora campos extras enviados pelo cliente (como created_at, updated_at, id, playlist_id)
+        extra = "ignore"
 
 
 class PlaylistItemOut(PlaylistItemBase):
