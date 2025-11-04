@@ -1,6 +1,6 @@
 """Modelos SQLAlchemy do banco de dados."""
 from __future__ import annotations
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from typing import Optional
 import enum
 
@@ -18,11 +18,20 @@ class MediaType(str, enum.Enum):
     VIDEO = "video"
 
 
+# Timezone de Moçambique (UTC+2)
+MOZAMBIQUE_TZ = timezone(timedelta(hours=2))
+
+
+def mozambique_now() -> datetime:
+    """Retorna o horário atual de Moçambique (UTC+2)."""
+    return datetime.now(MOZAMBIQUE_TZ).replace(tzinfo=None)
+
+
 # Modelo base com timestamps
 class TimestampMixin:
     """Mixin para adicionar created_at e updated_at."""
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=mozambique_now, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=mozambique_now, onupdate=mozambique_now, nullable=False)
 
 
 class User(Base, TimestampMixin):
@@ -79,7 +88,7 @@ class HistoryItem(Base, TimestampMixin):
     mime_type: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     duration_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     last_position_ms: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    last_played: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    last_played: Mapped[datetime] = mapped_column(DateTime, default=mozambique_now, nullable=False)
     play_count: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     
     # Relacionamentos
